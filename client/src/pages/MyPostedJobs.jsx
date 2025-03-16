@@ -1,13 +1,29 @@
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useContext } from 'react'
+import axios from 'axios';
+import { AuthContext } from '../providers/AuthProvider'
 
 const MyPostedJobs = () => {
+  const {user} = useContext(AuthContext)
+  const [jobs, set_jobs] = useState([]);
+
+  useEffect(() => {
+    fetch_all_jobs();
+  }, [user.email])
+
+  const fetch_all_jobs = async () => {
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/jobs/${user?.email}`);
+    set_jobs(data);
+  }
+  console.log(jobs);
   return (
     <section className='container px-4 mx-auto pt-12'>
       <div className='flex items-center gap-x-3'>
         <h2 className='text-lg font-medium text-gray-800 '>My Posted Jobs</h2>
 
         <span className='px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full '>
-          4 Job
+          {jobs.length} Job
         </span>
       </div>
 
@@ -64,7 +80,7 @@ const MyPostedJobs = () => {
                 <tbody className='bg-white divide-y divide-gray-200 '>
                   <tr>
                     <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      E-commerce Website Development
+                      {jobs. title}
                     </td>
 
                     <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
