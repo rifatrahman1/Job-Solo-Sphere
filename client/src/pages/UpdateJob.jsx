@@ -19,10 +19,11 @@ const UpdateJob = () => {
 
   const fetch_all_jobs = async () => {
     const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/job/${id}`);
+    console.log(data);
     set_job(data);
     setStartDate(new Date(data.deadline))
   }
- 
+
 
   const handleJobSubmit = async (event) => {
     event.preventDefault();
@@ -41,14 +42,14 @@ const UpdateJob = () => {
         name: user?.displayName,
         photo: user?.photoURL,
       }, category,
-       min_price,
-       max_price, 
-       description, 
-       deadline,
-       bid_count: job.bid_count,
+      min_price,
+      max_price,
+      description,
+      deadline,
+      bid_count: job.bid_count || 0,
     }
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/update_job/${id}`, form_data);
+      await axios.put(`${import.meta.env.VITE_API_URL}/update_job/${id}`, form_data);
       form.reset();
       toast.success('Data Updated Successfull!!!')
       navigate('/my-posted-jobs')

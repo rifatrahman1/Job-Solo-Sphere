@@ -119,7 +119,7 @@ const MyPostedJobs = () => {
                       </td>
 
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                        ${job.min_price} - ${job.max_price}Conceptual Sessions
+                        ${job.min_price} - ${job.max_price}
                       </td>
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <div className='flex items-center gap-x-2'>
@@ -156,7 +156,7 @@ const MyPostedJobs = () => {
                           </button>
 
                           <Link
-                            to={`/update/${job._idf}`}
+                            to={`/update/${job._id}`}
                             className='text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'
                           >
                             <svg
