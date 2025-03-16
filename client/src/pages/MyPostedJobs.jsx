@@ -4,6 +4,8 @@ import { useContext } from 'react'
 import axios from 'axios';
 import { format } from "date-fns";
 import { AuthContext } from '../providers/AuthProvider'
+import toast from 'react-hot-toast';
+import Swal from 'sweetalert2'
 
 const MyPostedJobs = () => {
   const { user } = useContext(AuthContext)
@@ -17,7 +19,34 @@ const MyPostedJobs = () => {
     const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/jobs/${user?.email}`);
     set_jobs(data);
   }
-  console.log(jobs);
+
+  const handle_delete = async (id) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios.delete(`${import.meta.env.VITE_API_URL}/job/${id}`);
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success"
+          });
+          fetch_all_jobs();
+        }
+      });
+    }
+    catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <section className='container px-4 mx-auto pt-12'>
       <div className='flex items-center gap-x-3'>
@@ -86,27 +115,30 @@ const MyPostedJobs = () => {
                       </td>
 
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      {format(new Date(job.deadline), "P")}
+                        {format(new Date(job.deadline), "P")}
                       </td>
 
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      ${job.min_price} - ${job.max_price}Conceptual Sessions
+                        ${job.min_price} - ${job.max_price}Conceptual Sessions
                       </td>
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <div className='flex items-center gap-x-2'>
                           <p
-                            className={`px-3 py-1  text-blue-500 bg-blue-100/60 text-xs  rounded-full`}
-                          >
+                            className={`px-3 py-1 
+                                ${job.category === 'Web Development' ? 'text-blue-500 bg-blue-100/60' : ''} 
+                                ${job.category === 'Graphics Design' ? 'text-green-500 bg-green-100/60' : ''} 
+                                ${job.category === 'Digital Marketing' ? 'text-red-500 bg-red-100/80' : ''} 
+                                 text-xs rounded-full`}>
                             {job.category}
                           </p>
                         </div>
                       </td>
                       <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                      {job.description.substring(0, 18)}...
+                        {job.description.substring(0, 18)}...
                       </td>
                       <td className='px-4 py-4 text-sm whitespace-nowrap'>
                         <div className='flex items-center gap-x-6'>
-                          <button className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
+                          <button onClick={() => handle_delete(job._id)} className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
                               fill='none'
@@ -124,7 +156,7 @@ const MyPostedJobs = () => {
                           </button>
 
                           <Link
-                            to={`/update/1`}
+                            to={`/update/${job._idf}`}
                             className='text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'
                           >
                             <svg
