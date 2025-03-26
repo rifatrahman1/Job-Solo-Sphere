@@ -21,7 +21,6 @@ const TabCategories = () => {
       return data
     },
   })
-  console.log(isLoading, isPending, isFetching)
   if (isLoading) return <LoadingSpinner />
   if (isError) console.log(isError)
   return (
